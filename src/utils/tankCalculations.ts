@@ -1,3 +1,4 @@
+
 import type { TankReading, TankSummary } from '../types/tank'
 
 const LOW_LEVEL_THRESHOLD = 20
@@ -5,6 +6,7 @@ const LOW_LEVEL_THRESHOLD = 20
 export function getTankSummary(
   readings: TankReading[]
 ): TankSummary | null {
+  // Remove readings with invalid timestamps or water levels
   const validReadings = readings.filter((reading) => {
     const timestamp = new Date(reading.timestamp).getTime()
 
@@ -20,31 +22,37 @@ export function getTankSummary(
     return null
   }
 
+  // Sort readings by timestamp
   const sortedReadings = [...validReadings].sort(
     (a, b) =>
       new Date(a.timestamp).getTime() -
       new Date(b.timestamp).getTime()
   )
 
+  // Find the date of the latest reading
   const latestDate = sortedReadings[
     sortedReadings.length - 1
   ].timestamp.slice(0, 10)
 
-  const todayReadings = sortedReadings.filter(
+  // Get readings belonging to the latest date
+  const latestDayReadings = sortedReadings.filter(
     (reading) => reading.timestamp.slice(0, 10) === latestDate
   )
 
-  const minimum = todayReadings.reduce((lowest, reading) =>
+  // Find the minimum and maximum water levels
+  const minimum = latestDayReadings.reduce((lowest, reading) =>
     reading.level_percent < lowest.level_percent ? reading : lowest
   )
 
-  const maximum = todayReadings.reduce((highest, reading) =>
+  const maximum = latestDayReadings.reduce((highest, reading) =>
     reading.level_percent > highest.level_percent ? reading : highest
   )
 
+  // Get the latest available reading
   const current = sortedReadings[sortedReadings.length - 1]
 
-  const lowLevelReadings = todayReadings.filter(
+  // Find readings below the configured threshold
+  const lowLevelReadings = latestDayReadings.filter(
     (reading) => reading.level_percent < LOW_LEVEL_THRESHOLD
   )
 
