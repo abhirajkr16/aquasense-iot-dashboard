@@ -61,5 +61,7 @@ export function getTankSummary(
     minimum,
     maximum,
     lowLevelReadings,
+    // Validated and sorted readings for the reporting day
+    dayReadings: latestDayReadings,
   }
 }

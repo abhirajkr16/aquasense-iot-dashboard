@@ -241,9 +241,11 @@ function App() {
     );
   }
 
-  const { current, minimum, maximum, lowLevelReadings } = tankSummary;
+  const { current, minimum, maximum, lowLevelReadings, dayReadings } = tankSummary;
 
-  const chartData = tankReadings.map((reading) => ({
+  // Use the validated, filtered day readings returned by getTankSummary so that
+  // the chart and history table are always consistent with the summary cards.
+  const chartData = dayReadings.map((reading) => ({
     ...reading,
     time: formatTime(reading.timestamp),
   }));
@@ -255,7 +257,8 @@ function App() {
   }
 
   return (
-    <main className="dashboard">
+    <main className={`dashboard ${sidebarOpen ? "sidebar-toggled" : ""}`}>
+      {/* Backdrop shown only on tablet/mobile when the sidebar drawer is open */}
       {sidebarOpen && (
         <button
           className="sidebar-overlay"
@@ -418,22 +421,26 @@ function App() {
               <Bell size={30} />
 
               <h2>
-                {lowLevelReadings.length > 0
-                  ? "Low Level Alert (Historical)"
-                  : "Tank Level Alerts"}
+                {isCurrentLow
+                  ? "Active Low Level Alert"
+                  : lowLevelReadings.length > 0
+                    ? "Historical Low Level Alert"
+                    : "Tank Level Alerts"}
               </h2>
             </div>
 
             {lowLevelReadings.length > 0 ? (
               <>
-                <div className="alert-content">
-                  <div className="alert-value">
-                    <strong>{minimum.level_percent}%</strong>
-                    <span>at {formatTime(minimum.timestamp)}</span>
-                  </div>
+                {lowLevelReadings.map((reading) => (
+                  <div className="alert-content" key={reading.timestamp}>
+                    <div className="alert-value">
+                      <strong>{reading.level_percent}%</strong>
+                      <span>at {formatTime(reading.timestamp)}</span>
+                    </div>
 
-                  <p>Threshold: below {LOW_LEVEL_THRESHOLD}%</p>
-                </div>
+                    <p>Threshold: below {LOW_LEVEL_THRESHOLD}%</p>
+                  </div>
+                ))}
 
                 <div className="alert-info">
                   <Info size={22} />

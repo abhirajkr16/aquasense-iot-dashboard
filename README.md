@@ -50,20 +50,18 @@ The alert threshold is set to 20%.
 ```text
 aquasense-dashboard/
 ├── public/
+│   └── favicon.svg
 ├── src/
-│   ├── components/
-│   │   └── dashboard/
-│   │       └── Dashboard.tsx
 │   ├── data/
-│   │   └── tankReadings.json
+│   │   └── tankReadings.json   ← mock sensor readings
 │   ├── types/
-│   │   └── tank.ts
+│   │   └── tank.ts             ← TankReading and TankSummary interfaces
 │   ├── utils/
-│   │   └── tankCalculations.ts
-│   ├── App.tsx
-│   ├── App.css
-│   ├── index.css
-│   └── main.tsx
+│   │   └── tankCalculations.ts ← validation, sorting, min/max/alert logic
+│   ├── App.tsx                 ← dashboard layout and all UI components
+│   ├── App.css                 ← all styles and responsive breakpoints
+│   ├── index.css               ← base reset and font settings
+│   └── main.tsx                ← React entry point
 ├── index.html
 ├── package.json
 └── README.md
@@ -113,17 +111,5 @@ To run the lint checks:
 npm run lint
 ```
 
-## AI Usage Note
-
-I used ChatGPT while working on this assignment, mainly to understand parts of the implementation and debug issues.
-
-- **Prompt 1:** Help me build a water tank dashboard in React and TypeScript using the JSON data from the assignment.
-- **Prompt 2:** Help me fix the chart tooltip so it shows the correct time and water level when I hover over different points.
-- **Issue I faced:** The chart tooltip was showing the wrong or unrelated reading when I moved the cursor between points.
-- **What was wrong:** The tooltip was not using the currently selected chart reading correctly. The separate Scatter series also made the tooltip behaviour harder to manage.
-- **How I fixed it:** I added a custom tooltip that reads the active chart payload and highlighted readings below 20% directly in the Area chart.
-- **How I checked it:** I hovered over different points and checked that the displayed time and water level matched the JSON data.
-
----
 
 Built as part of the AquaSense Mini-Build assignment for Nivoryx Systems Private Limited.
