@@ -605,9 +605,9 @@ function App() {
           </article>
         </section>
 
-        <footer className="dashboard-footer">
+        {/* <footer className="dashboard-footer">
           AquaSense Dashboard | Tank monitoring insights
-        </footer>
+        </footer> */}
       </section>
     </main>
   );
