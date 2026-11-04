@@ -1,0 +1,16 @@
+{
+  "name": "aquasense-api-testing",
+  "version": "1.0.0",
+  "description": "API testing for the AquaSense smart water monitoring system",
+  "main": "src/apiClient.js",
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nock": "^14.0.10"
+  }
+}
