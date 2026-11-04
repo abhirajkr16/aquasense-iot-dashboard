@@ -1,51 +1,66 @@
+# AquaSense – Smart Water Monitoring
 
-# AquaSense Mini-Build
+AquaSense is a mini-project developed for the AquaSense assignment by **Nivoryx Systems Private Limited**. It consists of a tank monitoring dashboard and an automated API testing module.
 
-A smart water monitoring mini-project developed as part of the AquaSense assignment for Nivoryx Systems Private Limited.
+The project uses mock tank readings and simulated API responses to demonstrate the dashboard functionality and API testing approach.
 
 ## Project Overview
 
-This repository contains two parts:
+### Part A – Tank Level Dashboard
 
-### Part A: Tank Level Dashboard
+A web dashboard that displays water tank readings using the JSON data provided in the assignment.
 
-A responsive dashboard that displays mock water tank readings.
+**Features**
+- Displays the current tank water level.
+- Shows the minimum and maximum water levels for the day.
+- Displays a low-water alert when the tank level drops below 20%.
+- Presents the readings through a visual dashboard.
 
-Features:
-- Current tank level
-- Daily minimum and maximum levels
-- Low water level alert when the tank level falls below 20%
-- Mock readings from the provided JSON data
+**Folder:** `aquasense-dashboard/`
 
-Folder: `aquasense-dashboard/`
+### Part B – API Testing
 
-### Part B: API Testing
+An automated testing module for the assumed AquaSense login and device status APIs.
 
-Automated tests for the assumed AquaSense login and device status APIs.
+**Features**
+- Tests login with valid and invalid credentials.
+- Checks authentication using valid, invalid and missing tokens.
+- Handles simulated offline device responses.
+- Validates malformed device responses.
+- Detects stale device timestamps.
+- Checks tank-level boundary values (0% and 100%).
 
-Features:
-- Login API testing
-- Authentication checks
-- Device status testing
-- Offline device handling
-- Malformed response validation
-- Stale timestamp detection
+**Folder:** `aquasense-api-testing/`
 
-Folder: `aquasense-api-testing/`
+## Tech Stack
 
-## Technologies Used
+### Frontend – Part A
 
-- React
-- TypeScript
-- JavaScript
-- Node.js
-- Axios
-- Jest
-- Nock
+| Technology | Purpose |
+|---|---|
+| React 19 | Building the user interface |
+| TypeScript 7 | Type safety and maintainable code |
+| Tailwind CSS 4 | Styling and responsive layouts |
+| Vite 8 | Development server and build tool |
+| Recharts 3 | Displaying tank readings through charts |
+| Lucide React | Icons |
+| Oxlint | Code linting |
 
-## Running the Projects
+### API Testing – Part B
 
-### Part A
+| Technology | Purpose |
+|---|---|
+| JavaScript | Test and API client implementation |
+| Node.js | JavaScript runtime |
+| Axios | Sending HTTP requests |
+| Jest | Running automated tests |
+| Nock | Mocking API responses |
+
+## Getting Started
+
+Make sure Node.js and npm are installed before running either part.
+
+### Run Part A – Dashboard
 
 ```bash
 cd aquasense-dashboard
@@ -53,7 +68,15 @@ npm install
 npm run dev
 ```
 
-### Part B
+Vite will start the development server and provide a local URL to open the dashboard in your browser.
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+### Run Part B – API Tests
 
 ```bash
 cd aquasense-api-testing
@@ -61,15 +84,63 @@ npm install
 npm test
 ```
 
-## API Testing Results
+Jest will execute the automated test suite and display the results in the terminal.
 
-The automated test suite currently contains 8 test cases, all passing with mocked API responses.
+## API Test Results
 
-No live backend or physical IoT device was provided. API responses are simulated using Nock.
+The Part B test suite contains **10 automated test cases**, covering:
+
+1. Login with valid credentials.
+2. Login with invalid credentials.
+3. Login with missing credentials.
+4. Device status with a valid token.
+5. Device status with an invalid token.
+6. Device status without a token.
+7. Offline device response.
+8. Malformed device response.
+9. Stale `last_seen` timestamp.
+10. Tank-level boundary values.
+
+All 10 tests passed in the latest test run.
+
+## Project Structure
+
+```text
+aquasense/
+├── aquasense-dashboard/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── README.md
+│
+├── aquasense-api-testing/
+│   ├── src/
+│   │   └── apiClient.js
+│   ├── tests/
+│   │   └── api.test.js
+│   ├── test-plan.md
+│   ├── package.json
+│   └── README.md
+│
+├── screenshots/
+├── .gitignore
+└── README.md
+```
 
 ## Documentation
 
-- Part A details: `aquasense-dashboard/README.md`
-- AI usage note: `aquasense-dashboard/ai-usage.md`
-- Part B test plan: `aquasense-api-testing/test-plan.md`
-- Part B details: `aquasense-api-testing/README.md`
+- [Dashboard Documentation](aquasense-dashboard/README.md)
+- [AI Usage Note](aquasense-dashboard/ai-usage.md)
+- [API Test Plan](aquasense-api-testing/test-plan.md)
+- [API Testing Documentation](aquasense-api-testing/README.md)
+
+## Notes
+
+The dashboard uses the mock readings supplied in the assignment. For Part B, API responses are simulated using Nock because no live backend or physical IoT device was provided.
+
+The offline response, HTTP status codes and five-minute stale-data threshold are testing assumptions rather than confirmed specifications from a live API.
+
+---
+
+**AquaSense Mini-Build Assignment**  
+Developed by Abhiraj Kumar

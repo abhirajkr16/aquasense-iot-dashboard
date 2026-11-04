@@ -1,18 +1,18 @@
 # AquaSense API Testing
 
-This project contains automated tests for the AquaSense login and device status APIs. It is developed as Part B of the AquaSense Mini-Build assignment for Nivoryx Systems Private Limited.
+This section is for the API testing part of my AquaSense Mini-Build project at Nivoryx Systems Private Limited.
 
-The tests use mocked API responses because a live backend was not provided.
+There are 2 APIs in this assignment. First is the user login API and second is the water tank device status API. As there was no real backend provided, I had to use mock responses to test how the API client would respond to different scenarios.
 
-## 1. Tech Stack
+## Tools and Technologies
 
-- JavaScript
-- Node.js
-- Axios
-- Jest
-- Nock
+- **JavaScript** – writing the API client and test cases
+- **Node.js** – running the project
+- **Axios** – sending API requests
+- **Jest** – running the tests
+- **Nock** – mocking API responses
 
-## 2. Project Structure
+## Project Structure
 
 ```text
 aquasense-api-testing/
@@ -26,19 +26,21 @@ aquasense-api-testing/
 └── README.md
 ```
 
-## 3. API Endpoints
+## APIs Covered
 
-### Login API
+### 1. Login
 
 `POST /login`
 
-Accepts email and password and returns an authentication token when login is successful.
+This endpoint accepts an email and password. If the credentials are valid, it is expected to return an authentication token.
 
-### Device Status API
+### 2. Device Status
 
 `GET /device/{id}/status`
 
-Returns device information:
+This endpoint returns the latest available information for a device.
+
+Example response:
 
 ```json
 {
@@ -48,62 +50,74 @@ Returns device information:
 }
 ```
 
-## 4. Installation
+The response contains the tank level, current pump state and the time when the device last reported its status.
 
-Navigate to the API testing folder:
+## Running the Project
+
+First, open the project folder:
 
 ```bash
 cd aquasense-api-testing
 ```
 
-Install dependencies:
+Install the required packages:
 
 ```bash
 npm install
 ```
 
-## 5. Running Tests
-
-Execute the automated test suite:
+Run the tests:
 
 ```bash
 npm test
 ```
 
-Jest runs the test cases and displays the execution results in the terminal.
+Jest will execute the test cases and show which tests passed or failed in the terminal.
 
-## 6. Test Coverage
+## What I Tested
 
-The project contains 10 automated test cases covering:
+I wrote 10 automated test cases to cover normal usage as well as situations where something goes wrong.
 
-1. Login with valid credentials.
-2. Login with invalid credentials.
-3. Login with missing credentials.
-4. Device status with a valid token.
-5. Device status with an invalid token.
-6. Device status without a token.
-7. Offline device response.
-8. Malformed device response.
-9. Stale `last_seen` timestamp.
-10. Tank level boundary values (0% and 100%).
+| No. | Test case |
+|---|---|
+| 1 | Login with valid credentials |
+| 2 | Login with invalid credentials |
+| 3 | Login with missing credentials |
+| 4 | Get device status using a valid token |
+| 5 | Get device status using an invalid token |
+| 6 | Get device status without a token |
+| 7 | Handle a device-unavailable response |
+| 8 | Handle an invalid device response |
+| 9 | Identify an old `last_seen` timestamp |
+| 10 | Check tank level values of 0% and 100% |
 
-Refer to `test-plan.md` for the complete test scenarios and expected results.
+All 10 tests passed in my latest test run.
 
-## 7. Mocking
+The detailed test scenarios and expected results are available in [test-plan.md](test-plan.md).
 
-Nock intercepts HTTP requests and returns predefined responses. This allows the tests to run without connecting to an actual backend.
+## How Mocking Works
 
-Axios is used to make HTTP requests, while Jest checks the returned data and expected errors.
+I used Nock to intercept the HTTP requests made through Axios. Instead of sending requests to a real backend, Nock returns the responses defined in the test file.
 
-## 8. Assumptions
+This made it possible to test successful login, authentication errors and device-related edge cases without needing an actual server or IoT device.
 
-- HTTP 401 represents an authentication failure.
-- HTTP 503 represents an unavailable device.
-- Device data older than 5 minutes is considered stale.
-- Tank levels from 0% to 100% are considered valid.
+## Assumptions
 
-These assumptions are used because the assignment does not specify exact error responses or a stale-data threshold.
+The assignment does not define exact error responses or a threshold for stale device data, so I used the following assumptions:
 
-## 9. Limitations
+- HTTP 401 indicates an authentication failure.
+- HTTP 503 indicates that the device is unavailable.
+- A `last_seen` timestamp older than 5 minutes is considered stale.
+- Tank levels between 0% and 100%, including both limits, are valid.
 
-The automated tests verify client-side behavior against mocked API responses. They do not verify the actual Nivoryx backend, physical IoT devices, or real network communication.
+These values are used for the tests and are not confirmed specifications of a live AquaSense API.
+
+## Limitations
+
+Since the tests use mocked responses, they only check how my API client behaves with the simulated data. They do not test a real backend, actual device communication or network failures.
+
+The project is intended to demonstrate the API testing approach described in the assignment.
+
+## Test mobile app when Wi-Fi is disconnected.
+
+I would first connect the mobile app and AquaSense device to the network and check whether the app is receiving real-time tank readings. Then I would perform a pump operation while disconnecting the device's Wi-Fi. I would check whether the app detects the connection loss and displays a message informing the user about the issue. The app should display the last known tank level along with its timestamp and indicate that the device is offline. If the device loses its connection after a pump command is sent, the app should not automatically assume that the command failed, as the device might have already received and executed it. Once Wi-Fi is restored, the app should fetch the latest device status and check the actual pump state. The command should only be sent again if necessary. This would help prevent duplicate commands and incorrect status information.
