@@ -26,11 +26,9 @@ import {
 } from "recharts";
 
 import readings from "./data/tankReadings.json";
-import { getTankSummary } from "./utils/tankCalculations";
+import { getTankSummary, LOW_LEVEL_THRESHOLD } from "./utils/tankCalculations";
 import type { TankReading } from "./types/tank";
 import "./App.css";
-
-const LOW_LEVEL_THRESHOLD = 20;
 
 const tankReadings = readings as TankReading[];
 const tankSummary = getTankSummary(tankReadings);
@@ -108,7 +106,7 @@ function WaterLevelTooltip({ active, payload }: WaterLevelTooltipProps) {
             margin: "7px 0 0",
           }}
         >
-          Below 20% threshold
+          Below {LOW_LEVEL_THRESHOLD}% threshold
         </p>
       )}
     </div>
@@ -241,7 +239,8 @@ function App() {
     );
   }
 
-  const { current, minimum, maximum, lowLevelReadings, dayReadings } = tankSummary;
+  const { current, minimum, maximum, lowLevelReadings, dayReadings } =
+    tankSummary;
 
   // Use the validated, filtered day readings returned by getTankSummary so that
   // the chart and history table are always consistent with the summary cards.
@@ -444,7 +443,8 @@ function App() {
 
                 <div className="alert-info">
                   <Info size={22} />
-                  Water level dropped below the configured 20% threshold.
+                  Water level dropped below the configured {LOW_LEVEL_THRESHOLD}
+                  % threshold.
                   {` ${lowLevelReadings.length} low-level reading(s) recorded.`}
                 </div>
               </>

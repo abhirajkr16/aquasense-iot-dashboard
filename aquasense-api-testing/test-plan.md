@@ -1,74 +1,68 @@
+
 # AquaSense API Test Plan
 
 ## 1. Objective
 
-The objective is to test the AquaSense login API and device status API using automated tests. Jest is used as the testing framework, Axios handles HTTP requests, and Nock simulates API responses.
-
-Since a live backend was not provided, all API responses are mocked.
+The purpose of these tests is to verify the login API and device status API. The tests cover successful requests, authentication failures, invalid responses, offline devices and timestamp validation.
 
 ## 2. Test Environment
 
-| Component | Technology |
-|---|---|
-| Programming Language | JavaScript |
-| Runtime | Node.js |
-| HTTP Client | Axios |
-| Testing Framework | Jest |
-| API Mocking | Nock |
+- Runtime: Node.js
+- Testing framework: Jest
+- HTTP mocking: Nock
+- HTTP client: Axios
+- API base URL: https://api.aquasense.test
 
-**Mock API Base URL:** `https://api.aquasense.test`
+All API responses are mocked using Nock. No real backend or physical AquaSense device is required.
 
 ## 3. Test Cases
 
-| ID | Test Scenario | Type | Expected Result |
+| ID | Test Scenario | Expected Result | Execution Result |
 |---|---|---|---|
-| TC01 | Login with valid credentials | Positive | API returns an authentication token |
-| TC02 | Login with invalid credentials | Negative | Login is rejected with HTTP 401 |
-| TC03 | Login with missing credentials | Negative | Client rejects the request before sending it |
-| TC04 | Get device status with a valid token | Positive | Device status is returned successfully |
-| TC05 | Get device status with an invalid token | Negative | API rejects the request with HTTP 401 |
-| TC06 | Get device status without a token | Negative | Client rejects the request before sending it |
-| TC07 | Device is offline | Edge | API returns HTTP 503 and the client handles the error |
-| TC08 | API returns malformed device data | Negative | Client rejects invalid tank-level data |
-| TC09 | Device returns an old `last_seen` timestamp | Edge | Client identifies the data as stale |
-| TC10 | Tank level boundary values (0% and 100%) | Edge | Both boundary values are accepted |
+| TC01 | Login with valid credentials | API returns an authentication token | Passed |
+| TC02 | Login with invalid credentials | API returns HTTP 401 | Passed |
+| TC03 | Login with missing credentials | Client rejects the request | Passed |
+| TC04 | Get device status with a valid token | Device status is returned successfully | Passed |
+| TC05 | Get device status with an invalid token | API returns HTTP 401 and the invalid token is sent | Passed |
+| TC06 | Get device status without a token | Client rejects the request | Passed |
+| TC07 | Request status from an offline device | API returns HTTP 503 | Passed |
+| TC08 | Receive a malformed device response | Client rejects the invalid tank level | Passed |
+| TC09 | Receive an invalid last_seen timestamp | Client rejects the invalid timestamp | Passed |
+| TC10 | Check device data older than five minutes | Data is identified as stale | Passed |
+| TC11 | Check device data 4 minutes 59 seconds old | Data is identified as fresh | Passed |
+| TC12 | Validate tank levels at 0% and 100% | Both boundary values are accepted | Passed |
 
-## 4. Automated Testing
+## 4. Execution Results
 
-The test cases are automated using Jest and Nock.
-
-- Jest executes the test cases and checks the expected results.
-- Axios sends requests to the mock API.
-- Nock intercepts HTTP requests and provides predefined responses.
-- Validation functions check device data and timestamp freshness.
-
-Run the tests using:
+The automated tests were executed using:
 
 ```bash
 npm test
 ```
 
-## 5. Test Execution Results
+**Results:**
+- Total test cases: 12
+- Passed: 12
+- Failed: 0
 
-Update this section after running the final test suite.
+All 12 automated tests passed successfully.
 
-- Total test cases: 10
-- Passed: To be confirmed
-- Failed: To be confirmed
+## 5. How Mocking Works
 
-## 6. Assumptions
+Nock is used to mock HTTP requests made by Axios. It provides predefined responses for each test scenario, such as successful login, invalid credentials and unavailable devices.
 
-- HTTP 401 represents an authentication failure.
-- HTTP 503 represents an unavailable device.
-- Device data older than 5 minutes is considered stale.
-- Tank level must be between 0 and 100 percent, inclusive.
-- The API response structure follows the assignment description.
-- The offline response and stale-data threshold are assumptions because exact specifications were not provided.
+This allows the API client to be tested without depending on a real backend or physical IoT device.
 
-## 7. Mobile App Wi-Fi Disconnection Testing
+## 6. Mobile App Wi-Fi Disconnection Testing
 
 To test the mobile app when the device loses Wi-Fi during an operation, I would first connect the device and mobile app to the network and verify that the app displays the latest tank status. Then I would disconnect the device's Wi-Fi while a pump operation is in progress. The app should detect that the device is unavailable, display an appropriate offline message and show the last known status with its timestamp instead of displaying outdated information as current. After reconnecting the device, the app should fetch the latest status and verify the actual pump state before retrying any pending operation. This helps prevent duplicate commands and incorrect status updates.
 
-## 8. Limitations
+## 7. Assumptions and Limitations
 
-These tests verify the API client's behavior using simulated responses. They do not verify the actual Nivoryx backend, physical IoT hardware, or real network communication.
+- HTTP 401 represents an authentication failure.
+- HTTP 503 represents an unavailable device.
+- Device data older than five minutes is considered stale.
+- Tank levels between 0 and 100, inclusive, are valid.
+- The five-minute threshold and response status codes are assumptions for this assignment.
+- All tests use mocked API responses. They do not verify communication with a real backend or physical IoT device.
+- The mobile Wi-Fi scenario is a proposed manual testing approach, not an executed test.

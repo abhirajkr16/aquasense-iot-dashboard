@@ -1,7 +1,7 @@
 
 import type { TankReading, TankSummary } from '../types/tank'
 
-const LOW_LEVEL_THRESHOLD = 20
+export const LOW_LEVEL_THRESHOLD = 20
 
 export function getTankSummary(
   readings: TankReading[]

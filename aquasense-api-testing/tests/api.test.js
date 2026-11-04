@@ -61,6 +61,7 @@ describe("Device status API tests", () => {
   test("should reject an invalid token", async () => {
     nock(BASE_URL)
       .get("/device/tank-101/status")
+      .matchHeader("Authorization", "Bearer invalid-token")
       .reply(401, { message: "Unauthorized" });
 
     await expect(
@@ -92,11 +93,23 @@ describe("Device status API tests", () => {
     nock(BASE_URL).get("/device/tank-101/status").reply(200, {
       level_percent: "seventy-five",
       pump_state: "off",
-      last_seen: "invalid-date",
+      last_seen: "2026-11-04T10:00:00Z",
     });
 
     await expect(getDeviceStatus("tank-101", "test-token")).rejects.toThrow(
       "Invalid tank level",
+    );
+  });
+
+  test("should reject an invalid last_seen timestamp", async () => {
+    const invalidStatus = {
+      level_percent: 75,
+      pump_state: "off",
+      last_seen: "invalid-date",
+    };
+
+    expect(() => validateDeviceStatus(invalidStatus)).toThrow(
+      "Invalid last_seen timestamp",
     );
   });
 
@@ -107,6 +120,15 @@ describe("Device status API tests", () => {
     const result = isLastSeenStale(lastSeen, currentTime);
 
     expect(result).toBe(true);
+  });
+
+  test("should treat data from 4 minutes 59 seconds ago as fresh", () => {
+    const lastSeen = "2026-11-04T10:00:00Z";
+    const currentTime = new Date("2026-11-04T10:04:59Z");
+
+    const result = isLastSeenStale(lastSeen, currentTime);
+
+    expect(result).toBe(false);
   });
 
   test("should accept tank level boundary values of 0 and 100", () => {
